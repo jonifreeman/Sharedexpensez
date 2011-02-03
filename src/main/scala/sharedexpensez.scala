@@ -13,7 +13,7 @@ object sharedexpensez {
   val debra  = Person("Debra")
   val harry  = Person("Harry")
 
-  val trip = sharedexpenses ( implicit s => for {
+  val trip = sharedexpenses ( for {
     _ <- dexter spent 5300
     _ <- angel  spent 2700
     _ <- debra  spent  800
@@ -29,15 +29,15 @@ object sharedexpensez {
   // Implementation
 
   case class Person(name: String) {
-    def spent(money: Int)(implicit s: State[Map[Person, Int], Unit]) = 
-      s.withs { adjust(this, money, _) }
+    def spent(money: Int) = 
+      state { (s: Map[Person, Int]) => (adjust(this, money, s), ()) }
 
-    def gave(borrower: Person, money: Int)(implicit s: State[Map[Person, Int], Unit]) = 
-      s.withs { m => adjust(this, money, adjust(borrower, -money, m)) }
+    def gave(borrower: Person, money: Int) = 
+      state { (s: Map[Person, Int]) => (adjust(this, money, adjust(borrower, -money, s)), ()) }
   }
 
-  def sharedexpenses(f: State[Map[Person, Int], Unit] => State[Map[Person, Int], Unit]) = 
-    f(init[Map[Person, Int]].map(_ => ())).apply(Map.empty)._1
+  def sharedexpenses(s: State[Map[Person, Int], Unit]) = 
+    s.apply(Map.empty)._1
 
   def solve(state: Map[Person, Int]) = {
     def solve1(err: Int, s: Map[Person, Int]): List[String] = {

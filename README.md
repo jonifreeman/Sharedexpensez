@@ -13,7 +13,7 @@ An example
     val debra  = Person("Debra")
     val harry  = Person("Harry")
 
-    val trip = sharedexpenses ( implicit s => for {
+    val trip = sharedexpenses ( for {
       _ <- dexter spent 5300
       _ <- angel  spent 2700
       _ <- debra  spent  800
@@ -47,7 +47,7 @@ After that the example would look as:
     val debra  = Person("Debra")
     val harry  = Person("Harry")
 
-    val trip = sharedexpenses ( implicit s => for {
+    val trip = sharedexpenses ( for {
       dexter spent 5300
       angel  spent 2700
       debra  spent  800
